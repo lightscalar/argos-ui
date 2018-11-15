@@ -5,40 +5,31 @@
 </template>
 
 <script>
-  // import Component from "../component_location"
+// import Component from "../component_location"
 
-  export default {
+export default {
+  components: {},
 
-    components: {},
+  props: [],
 
-    props: [],
+  data() {
+    return {};
+  },
 
-    data () {
-      return {
-      }
-    },
+  watch: {},
 
-    watch: {
+  methods: {},
 
-    },
+  computed: {},
 
-    methods: {
-
-    },
-
-    computed: {
-
-    },
-
-    mounted () {
-    }
+  mounted() {
+    console.log("HERE!");
   }
-
+};
 </script>
 
 <style>
 h1 {
-  font-weight: normal
+  font-weight: normal;
 }
 </style>
-
