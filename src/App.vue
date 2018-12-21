@@ -1,29 +1,43 @@
 <template>
 
-  <v-app id='app'>
+  <v-app id='application'>
 
     <v-toolbar app class='elevation-0' style='background-color: #008066'>
       <v-btn icon dark @click='toggleMenu'> <v-icon>menu</v-icon> </v-btn>
 
       <img src='./assets/logo@2x.png'
-           @click='toggleMenu'
-           height=68
-           style='margin-left:32px; margin-top:-4px; cursor: pointer'>
-      <h1 class='logo' >ARGOS | Automated RecoGnition Of Species</h1>
-      <v-spacer></v-spacer>
+           @click='navigateTo("LandingPage")'
+           height=60
+           style='margin-left:32px; margin-top:0px; cursor: pointer'>
+      <img src='./assets/2x/text-logo@2x.png' height=50 style='margin-left: 20px'/>
 
-      <!-- <h1 class='white--text'>Target Species { &nbsp; </h1> -->
+      <v-spacer></v-spacer>
 
       <v-tooltip bottom>
         <v-chip
+          v-if="$route.name=='image'"
           label
-          @click.native="openLibrary"
           slot='activator'
-          v-bind:style="{backgroundColor: codeColor, color: textColor}">
-          Frangula Alnus
+          @click.native='$store.commit("toggleLibrary")'
+          v-bind:style="{backgroundColor: targetColor, color: textColor}">
+          {{targetScientificName}}
         </v-chip>
-        <span>Current annotation species—click to change</span>
+        <span>Current annotation target—click to change</span>
       </v-tooltip>
+
+        <v-btn
+          v-if="annotationMode"
+          @click.native='returnToMap()'>
+          <v-icon left>navigation</v-icon>
+          Map
+        </v-btn>
+        <v-btn
+          primary
+          v-if="$route.name=='map'"
+          @click.native="$router.push({name: 'maps'})">
+          <v-icon left>navigation</v-icon>
+          Maps
+        </v-btn>
     </v-toolbar>
 
     <v-navigation-drawer
@@ -32,12 +46,18 @@
       temporary
       style='top:90px'
       >
+
       <v-list class="pa-1">
         <v-list-tile avatar>
+          <v-list-tile-avatar>
+            <img src="https://s.gravatar.com/avatar/aab3611bede0682b0e2272b6fcdd6aaa?s=80">
+          </v-list-tile-avatar>
 
-          <v-list-tile-content>
-            <v-list-tile-title><h2>Available Options</h2></v-list-tile-title>
-          </v-list-tile-content>
+      <v-list-tile-content>
+        <v-list-tile-title>
+          <h3>Matthew J. Lewis</h3>
+        </v-list-tile-title>
+      </v-list-tile-content>
         </v-list-tile>
       </v-list>
 
@@ -47,7 +67,7 @@
         <v-list-tile
           v-for="item in items"
           :key="item.title"
-          @click=""
+          @click="navigateTo(item.routeName)"
           >
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -63,37 +83,104 @@
       <v-container fluid>
         <router-view></router-view>
       </v-container>
-      <v-footer app style='background-color: #008066; height:40px'>
-        <small class='white--text' style='margin-left:55px; margin-top: 3px'>
-          Copyright 2018, Michigan Aerospace Corporatation. Ann Arbor, MI.
-        </small>
-      </v-footer>
     </v-content>
+    <target-library></target-library>
   </v-app>
 
 </template>
 
 <script>
+import TargetLibrary from "./components/TargetLibrary";
 export default {
+  components: { TargetLibrary },
   name: "App",
+
+  watch: {
+    $route() {
+      $("#zoombox").remove();
+      $(".zoomContainer").remove();
+    }
+  },
+
   data() {
     return {
-      codeColor: "#f3f3f3",
-      textColor: "#000000",
-      drawer: true,
+      drawer: false,
       items: [
-        { title: "Map Annotation", icon: "map" },
+        { title: "Map Annotation", icon: "map", routeName: "maps" },
         { title: "Neural Network Training", icon: "device_hub" },
         { title: "Performance Evaluation", icon: "timeline" },
-        { title: "Library", icon: "library_books" }
+        { title: "Library", icon: "library_books", routeName: "library" },
+        { title: "System Status", icon: "insert_chart" },
+        { title: "Settings", icon: "settings" }
       ]
     };
   },
+
   methods: {
     toggleMenu() {
-      console.log("Toggling the menu.");
       this.drawer = !this.drawer;
+    },
+
+    colorMap(color) {
+      if (color) {
+        function hexToRgb(hex) {
+          var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result
+            ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+              }
+            : null;
+        }
+        var rgb = hexToRgb(color);
+        var r = rgb.r;
+        var g = rgb.g;
+        var b = rgb.b;
+        if (r * 0.299 + g * 0.587 + b * 0.114 > 127) {
+          return "#000000";
+        } else {
+          return "#ffffff";
+        }
+      } else {
+        return "#000000";
+      }
+    },
+
+    navigateTo(routeName) {
+      if (routeName == "library") {
+        this.$store.commit("toggleLibrary");
+        this.toggleMenu();
+      } else {
+        this.$router.push({ name: routeName });
+      }
+    },
+
+    returnToMap() {
+      router.push({
+        name: "map",
+        params: { mapId: this.$store.state.mapId }
+      });
     }
+  },
+
+  computed: {
+    annotationMode() {
+      return this.$store.state.annotationMode;
+    },
+    targetScientificName() {
+      return this.$store.state.target.scientific_name;
+    },
+    targetColor() {
+      return this.$store.state.target.color_code;
+    },
+    textColor() {
+      return this.colorMap(this.targetColor);
+    }
+  },
+
+  mounted() {
+    this.$store.dispatch("getTargets");
   }
 };
 </script>
@@ -102,28 +189,16 @@ export default {
 html,
 body {
   margin: 0;
-  height: 100%;
-  overflow: hidden;
   margin-top: -18px;
+  background-color: #fafafa;
 }
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+#application {
   text-align: center;
-  color: #2c3e50;
   margin-top: 10px;
+  margin-bottom: -125px;
 }
 .logo {
   color: #ffffff;
   margin-left: 15px;
-}
-.overlay: {
-  opacity: 0.5;
-  position: absolute;
-  color: blue;
-  left: 100px;
-  top: 100px;
-  width: 100px;
-  height: 100px;
 }
 </style>
