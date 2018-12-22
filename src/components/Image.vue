@@ -44,17 +44,20 @@ export default {
       this.updateAnnotations();
       this.updateGroundTruth();
     },
-    image: function() {
+    imageLocation: function() {
       this.updateAnnotations();
       this.updateGroundTruth();
+    },
+    colorMap: function() {
+      this.updateAnnotations();
     }
   },
 
   methods: {
     deleteAll() {
       if (this.groundTruthMode) {
-        this.$store.dispatch('deleteGroundTruth', this.imageId)
-        $('.post-field-truth').remove()
+        this.$store.dispatch("deleteGroundTruth", this.imageId);
+        $(".post-field-truth").remove();
       } else {
         this.$store.dispatch("deleteAnnotations", this.imageId);
         $(".annotation").remove();
@@ -109,15 +112,15 @@ export default {
       // Add a ground truth annotation.
       var imgHeight = $("#image").height();
       var imgWidth = $("#image").width();
-      var truth = {}
+      var truth = {};
       truth.row = this.selectedY / imgHeight;
       truth.col = this.selectedX / imgWidth;
-      truth.code = this.target.codes[0]
-      truth.color_code = this.target.color_code
-      truth.scientific_name = this.target.scientific_name
-      truth.image_id = this.imageId
-      this.$store.dispatch('createGroundTruth', truth)
-      this.plotGroundTruth(truth)
+      truth.code = this.target.codes[0];
+      truth.color_code = this.target.color_code;
+      truth.scientific_name = this.target.scientific_name;
+      truth.image_id = this.imageId;
+      this.$store.dispatch("createGroundTruth", truth);
+      this.plotGroundTruth(truth);
     },
 
     addAnnotation() {
@@ -152,7 +155,7 @@ export default {
     },
 
     updateAnnotations() {
-      $(".annotations").remove();
+      //$(".annotations").remove();
       for (var i = 0; i < this.annotations.length; i++) {
         this.plotAnnotation(this.annotations[i]);
       }
@@ -160,7 +163,7 @@ export default {
 
     plotAnnotation(annotation) {
       var elementId = annotation.element_id;
-      var color = this.$store.state.colorMap[annotation.scientific_name];
+      var color = this.colorMap[annotation.scientific_name];
       var imgHeight = $("#image").height();
       var imgWidth = $("#image").width();
       var row = annotation.row * imgHeight;
@@ -179,8 +182,6 @@ export default {
     },
 
     plotGroundTruth(truth) {
-      console.log('Plotting ground truth.')
-      console.log(truth)
       var width = $("#image").width();
       var height = $("#image").height();
       var row = parseInt(truth.row * height);
@@ -197,7 +198,7 @@ export default {
         var radius = "50%"; // circles for field-collected truth
       } else {
         var radius = "0%"; // squares for post-field truth
-        $("#"+id).addClass('post-field-truth')
+        $("#" + id).addClass("post-field-truth");
       }
       $("#" + id).css({ "border-radius": radius });
       $("#" + id).css({ height: "18px" });
@@ -229,6 +230,9 @@ export default {
       return (
         this.$store.state.imageServerUrl + "/" + this.$store.state.path_to_image
       );
+    },
+    colorMap() {
+      return this.$store.state.colorMap;
     },
     target() {
       return this.$store.state.target;
