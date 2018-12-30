@@ -90,23 +90,22 @@ export default new Vuex.Store({
     setMap(state, map) {
       state.map = map.map;
       state.mapId = map.map_id;
-      state.nearby_truth = map.nearby_truth;
-      state.unique_truth = map.unique_truth;
-      state.ref_image_rows = map.image_rows;
-      state.ref_image_cols = map.image_cols;
+      state.nearby_truth = map.truth.nearby;
+      state.unique_truth = map.truth.unique;
     },
 
-    setImageList(state, imageList) {
-      state.imageList = imageList;
-      router.push({ name: "image", params: { imageId: imageList[0] } });
+    setImageList(state, tileList) {
+      state.imageList = tileList;
+      router.push({ name: "image", params: { imageId: tileList[0] } });
     },
 
-    setImage(state, imageObj) {
-      state.nearby_truth_image = imageObj.truth.nearby_truth;
-      state.unique_truth_image = imageObj.truth.unique_truth;
-      state.path_to_image = imageObj.path_to_image;
-      state.imageId = imageObj.image_id;
-      state.mapId = imageObj.map_id;
+    setImage(state, tilePackage) {
+      console.log(tilePackage.truth)
+      state.nearby_truth_image = tilePackage.truth.nearby;
+      state.unique_truth_image = tilePackage.truth.unique;
+      state.path_to_image = tilePackage.tile.path_to_tile;
+      state.imageId = tilePackage.tile.tile_id;
+      state.mapId = tilePackage.tile.map_id;
     },
 
     setPathToImage(state, path_to_image) {
@@ -162,7 +161,7 @@ export default new Vuex.Store({
 
     selectSite(context, site) {
       var mapId = site.map_id;
-      var params = { col: site.col_frac, row: site.row_frac };
+      var params = { beta: site.col_frac, alpha: site.row_frac };
       api.getResourceAndQuery("map-images", mapId, params).then(function(resp) {
         var data = resp.data;
         context.commit("setImageList", data);

@@ -64,8 +64,8 @@ export default {
       var height = $("#currentMap").height();
       console.log("Height of image is: " + height);
       for (var k = 0; k < truths.length; k++) {
-        var row = parseInt((truths[k].row * height) / this.refRows);
-        var col = parseInt((truths[k].col * width) / this.refCols);
+        var row = parseInt((truths[k].alpha * height));
+        var col = parseInt((truths[k].beta * width));
         var id = col + "gt" + row;
         var div =
           "<div id=" +
@@ -111,14 +111,6 @@ export default {
     imageServerUrl() {
       return this.$store.state.imageServerUrl;
     },
-    refRows() {
-      console.log(this.$store.state.ref_image_rows);
-      return this.$store.state.ref_image_rows;
-    },
-    refCols() {
-      console.log(this.$store.state.ref_image_cols);
-      return this.$store.state.ref_image_cols;
-    }
   },
 
   mounted() {

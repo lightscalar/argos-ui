@@ -113,8 +113,8 @@ export default {
       var imgHeight = $("#image").height();
       var imgWidth = $("#image").width();
       var truth = {};
-      truth.row = this.selectedY / imgHeight;
-      truth.col = this.selectedX / imgWidth;
+      truth.alpha = this.selectedY / imgHeight;
+      truth.beta = this.selectedX / imgWidth;
       truth.code = this.target.codes[0];
       truth.color_code = this.target.color_code;
       truth.scientific_name = this.target.scientific_name;
@@ -142,12 +142,12 @@ export default {
         parseInt((this.selectedY / imgHeight) * 10000);
       var annotateId = this.imageId + "-" + elementId;
       var annotation = {
-        col: this.selectedX / imgWidth,
-        row: this.selectedY / imgHeight,
+        beta: this.selectedX / imgWidth,
+        alpha: this.selectedY / imgHeight,
         scientific_name: this.$store.state.target.scientific_name,
         annotation_id: annotateId,
         element_id: elementId,
-        image_id: this.imageId
+        tile_id: this.imageId
       };
       // this.annotations.push(annotation);
       this.$store.dispatch("saveAnnotation", annotation);
@@ -166,8 +166,8 @@ export default {
       var color = this.colorMap[annotation.scientific_name];
       var imgHeight = $("#image").height();
       var imgWidth = $("#image").width();
-      var row = annotation.row * imgHeight;
-      var col = annotation.col * imgWidth;
+      var row = annotation.alpha * imgHeight;
+      var col = annotation.beta * imgWidth;
       $("#imageHolder").append(
         "<div id=" + elementId + ' class="annotation"></div>'
       );
@@ -184,8 +184,8 @@ export default {
     plotGroundTruth(truth) {
       var width = $("#image").width();
       var height = $("#image").height();
-      var row = parseInt(truth.row * height);
-      var col = parseInt(truth.col * width);
+      var row = parseInt(truth.alpha * height);
+      var col = parseInt(truth.beta * width);
       var id = col + "gt" + row;
       var div =
         "<div id=" +
