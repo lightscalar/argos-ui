@@ -1,6 +1,6 @@
 <template>
 
-  <v-app id='application'>
+  <v-app id='application' style='max-height: 900px;'>
 
     <v-toolbar app class='elevation-0' style='background-color: #008066'>
       <v-btn icon dark @click='toggleMenu'> <v-icon>menu</v-icon> </v-btn>

@@ -100,12 +100,21 @@ export default new Vuex.Store({
     },
 
     setImage(state, tilePackage) {
-      console.log(tilePackage.truth)
+      console.log(tilePackage.truth);
       state.nearby_truth_image = tilePackage.truth.nearby;
       state.unique_truth_image = tilePackage.truth.unique;
       state.path_to_image = tilePackage.tile.path_to_tile;
       state.imageId = tilePackage.tile.tile_id;
       state.mapId = tilePackage.tile.map_id;
+    },
+
+    setNewImage(state, tilePackage) {
+      state.nearby_truth_image = tilePackage.truth.nearby;
+      state.unique_truth_image = tilePackage.truth.unique;
+      state.path_to_image = tilePackage.tile.path_to_tile;
+      state.imageId = tilePackage.tile.tile_id;
+      state.mapId = tilePackage.tile.map_id;
+      router.push({ name: "image", params: { imageId: state.imageId } });
     },
 
     setPathToImage(state, path_to_image) {
@@ -180,6 +189,14 @@ export default new Vuex.Store({
       });
     },
 
+    navigateFromTile(context, direction) {
+      var params = { direction: direction };
+      var tile_id = context.state.imageId
+      api.getResourceAndQuery("tiles", tile_id, params).then(function(resp) {
+        context.commit("setNewImage", resp.data);
+      });
+    },
+
     getTargets(context) {
       api.listResource("targets").then(function(resp) {
         context.commit("setTargets", resp.data);
@@ -235,11 +252,11 @@ export default new Vuex.Store({
     },
 
     createGroundTruth(context, truth) {
-      api.postResource("truths", truth)
+      api.postResource("truths", truth);
     },
 
     deleteGroundTruth(context, imageId) {
-      api.deleteResource('truths', imageId)
+      api.deleteResource("truths", imageId);
     }
   }
 });

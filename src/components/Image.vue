@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-layout row>
-      <v-flex xs9 pa-2 >
+      <v-flex xs8 pa-2 >
         <div id="imageHolder">
           <img
             id='image'
@@ -11,12 +11,14 @@
         </div>
       </v-flex>
 
-      <v-flex xs3>
+      <v-flex xs4>
         <ground-truth
           v-on:delete='deleteAll'
           v-on:last='deleteLast'
           :truths='uniqueTruths'></ground-truth>
+        <br>
       </v-flex>
+
     </v-layout>
   </v-container>
 
@@ -25,9 +27,10 @@
 <script>
 // import Component from "../component_location"
 import GroundTruth from "./GroundTruth";
+import MiniMap from "./MiniMap"
 
 export default {
-  components: { GroundTruth },
+  components: { GroundTruth, MiniMap },
 
   props: ["imageId"],
 
@@ -36,6 +39,11 @@ export default {
   },
 
   watch: {
+    imageId: function() {
+      this.updateGroundTruth();
+      this.updateAnnotations();
+      this.$store.dispatch("getAnnotations", this.imageId);
+    },
     nearbyTruths: function() {
       this.updateGroundTruth();
       this.updateAnnotations();
@@ -155,7 +163,7 @@ export default {
     },
 
     updateAnnotations() {
-      //$(".annotations").remove();
+      $(".annotation").remove();
       for (var i = 0; i < this.annotations.length; i++) {
         this.plotAnnotation(this.annotations[i]);
       }
@@ -249,6 +257,34 @@ export default {
     this.$store.commit("setAnnotationMode", true);
     this.$store.dispatch("getAnnotations", this.imageId);
     $(".ground-truth").remove();
+    document.onkeydown = checkKey;
+    var self = this
+
+    // Prevent the arrow keys from scrolling.
+    window.addEventListener("keydown", function(e) {
+      // space and arrow keys
+      if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+      }
+    }, false);
+
+    // Let arrow keys navigate around the image.
+    function checkKey(e) {
+      e = e || window.event;
+      if (e.keyCode == "38") {
+        // up arrow
+        self.$store.dispatch("navigateFromTile", 'north')
+      } else if (e.keyCode == "40") {
+        // down arrow
+        self.$store.dispatch("navigateFromTile", 'south')
+      } else if (e.keyCode == "37") {
+        // left arrow
+        self.$store.dispatch("navigateFromTile", 'west')
+      } else if (e.keyCode == "39") {
+        // right arrow
+        self.$store.dispatch("navigateFromTile", 'east')
+      }
+    }
   }
 };
 </script>
