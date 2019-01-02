@@ -273,6 +273,7 @@ export default {
       e = e || window.event;
       if (e.keyCode == "38") {
         // up arrow
+        self.$store.commit('setPathToImage', 'cogs.gif')
         self.$store.dispatch("navigateFromTile", 'north')
       } else if (e.keyCode == "40") {
         // down arrow
