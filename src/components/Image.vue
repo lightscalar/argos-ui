@@ -17,6 +17,9 @@
           v-on:last='deleteLast'
           :truths='uniqueTruths'></ground-truth>
         <br>
+        <p class='text-xs-left suggestion'>
+        Tip: Use arrow keys to navigate to neighboring tile images.
+        </p>
       </v-flex>
 
     </v-layout>
@@ -273,7 +276,6 @@ export default {
       e = e || window.event;
       if (e.keyCode == "38") {
         // up arrow
-        self.$store.commit('setPathToImage', 'cogs.gif')
         self.$store.dispatch("navigateFromTile", 'north')
       } else if (e.keyCode == "40") {
         // down arrow
@@ -311,5 +313,8 @@ export default {
   background-color: red;
 }
 .annotation {
+}
+.suggestion {
+  color: gray;
 }
 </style>
