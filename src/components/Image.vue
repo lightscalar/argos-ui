@@ -18,7 +18,7 @@
           :truths='uniqueTruths'></ground-truth>
         <br>
         <p class='text-xs-left suggestion'>
-        Tip: Use arrow keys to navigate to neighboring tile images.
+        Tip: Use arrow keys to navigate to neighboring images.
         </p>
       </v-flex>
 
@@ -87,7 +87,9 @@ export default {
         $("#image").elevateZoom({
           scrollZoom: true,
           tint: true,
-          tintOpacity: 0.1
+          tintOpacity: 0.1,
+          zoomWindowPosition: 1,
+          zoomWindowOffety: 190
         });
         $(document).unbind("click");
         $(document).bind("click", "#zoomPicture", this.imageClicked);
@@ -158,7 +160,7 @@ export default {
         scientific_name: this.$store.state.target.scientific_name,
         annotation_id: annotateId,
         element_id: elementId,
-        tile_id: this.imageId
+        image_id: this.imageId
       };
       // this.annotations.push(annotation);
       this.$store.dispatch("saveAnnotation", annotation);
@@ -276,16 +278,16 @@ export default {
       e = e || window.event;
       if (e.keyCode == "38") {
         // up arrow
-        self.$store.dispatch("navigateFromTile", 'north')
+        self.$store.dispatch("navigateFromImage", 'north')
       } else if (e.keyCode == "40") {
         // down arrow
-        self.$store.dispatch("navigateFromTile", 'south')
+        self.$store.dispatch("navigateFromImage", 'south')
       } else if (e.keyCode == "37") {
         // left arrow
-        self.$store.dispatch("navigateFromTile", 'west')
+        self.$store.dispatch("navigateFromImage", 'west')
       } else if (e.keyCode == "39") {
         // right arrow
-        self.$store.dispatch("navigateFromTile", 'east')
+        self.$store.dispatch("navigateFromImage", 'east')
       }
     }
   }

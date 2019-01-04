@@ -189,7 +189,7 @@ export default new Vuex.Store({
       });
     },
 
-    navigateFromTile(context, direction) {
+    navigateFromImage(context, direction) {
       context.commit('setPathToImage', 'cogs.gif')
       var params = { direction: direction };
       var image_id = context.state.imageId
