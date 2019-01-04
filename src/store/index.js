@@ -94,26 +94,26 @@ export default new Vuex.Store({
       state.unique_truth = map.truth.unique;
     },
 
-    setImageList(state, tileList) {
-      state.imageList = tileList;
-      router.push({ name: "image", params: { imageId: tileList[0] } });
+    setImageList(state, imageList) {
+      state.imageList = imageList;
+      router.push({ name: "image", params: { imageId: imageList[0] } });
     },
 
-    setImage(state, tilePackage) {
-      console.log(tilePackage.truth);
-      state.nearby_truth_image = tilePackage.truth.nearby;
-      state.unique_truth_image = tilePackage.truth.unique;
-      state.path_to_image = tilePackage.tile.path_to_tile;
-      state.imageId = tilePackage.tile.tile_id;
-      state.mapId = tilePackage.tile.map_id;
+    setImage(state, imagePackage) {
+      console.log(imagePackage.truth);
+      state.nearby_truth_image = imagePackage.truth.nearby;
+      state.unique_truth_image = imagePackage.truth.unique;
+      state.path_to_image = imagePackage.image.path_to_image;
+      state.imageId = imagePackage.image.image_id;
+      state.mapId = imagePackage.image.map_id;
     },
 
-    setNewImage(state, tilePackage) {
-      state.nearby_truth_image = tilePackage.truth.nearby;
-      state.unique_truth_image = tilePackage.truth.unique;
-      state.path_to_image = tilePackage.tile.path_to_tile;
-      state.imageId = tilePackage.tile.tile_id;
-      state.mapId = tilePackage.tile.map_id;
+    setNewImage(state, imagePackage) {
+      state.nearby_truth_image = imagePackage.truth.nearby;
+      state.unique_truth_image = imagePackage.truth.unique;
+      state.path_to_image = imagePackage.image.path_to_image;
+      state.imageId = imagePackage.image.image_id;
+      state.mapId = imagePackage.image.map_id;
       router.push({ name: "image", params: { imageId: state.imageId } });
     },
 
@@ -192,8 +192,8 @@ export default new Vuex.Store({
     navigateFromTile(context, direction) {
       context.commit('setPathToImage', 'cogs.gif')
       var params = { direction: direction };
-      var tile_id = context.state.imageId
-      api.getResourceAndQuery("tiles", tile_id, params).then(function(resp) {
+      var image_id = context.state.imageId
+      api.getResourceAndQuery("images/navigate", image_id, params).then(function(resp) {
         context.commit("setNewImage", resp.data);
       });
     },
